@@ -3,6 +3,15 @@ namespace AfterShootingZombie
     public partial class Form1 : Form
     {
         IEnumerable<string> backupItems;
+        bool checkUp;
+
+        void Refresh()
+        {
+            personListBox.Items.Clear();
+
+            foreach (var item in backupItems)
+                personListBox.Items.Add(item);
+        }
 
         public Form1()
         {
@@ -11,7 +20,10 @@ namespace AfterShootingZombie
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            personListBox.Items.Add("Ali");
+            Refresh();
+
+            personListBox.Items.Add(textBox1.Text);
+            backupItems = personListBox.Items.Cast<string>().ToList();
         }
 
         private void exitButton_Click(object sender, EventArgs e)
@@ -21,7 +33,11 @@ namespace AfterShootingZombie
 
         private void removeButton_Click(object sender, EventArgs e)
         {
+            var selected = personListBox.SelectedItem;
+            Refresh();
 
+            personListBox.Items.Remove(selected);
+            backupItems = personListBox.Items.Cast<string>().ToList();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -33,18 +49,25 @@ namespace AfterShootingZombie
 
                 personListBox.Items.Add($"{i}. {code}");
             }
+
+            backupItems = personListBox.Items.Cast<string>().ToList();
         }
 
         private void searchButton_Click(object sender, EventArgs e)
         {
-            var items = personListBox.Items.Cast<string>();
-            backupItems = items;
+            var items = personListBox.Items.Cast<string>().ToList();
             personListBox.Items.Clear();
-            var data = items;//.Where(c => c == textBox1.Text);
+
+            if (!checkUp)
+            {
+                backupItems = items;
+                checkUp = true;
+            }
+
+            var data = backupItems.Where(c => c.Contains(textBox1.Text));
 
             foreach (var item in data)
                 personListBox.Items.Add(item);
-
         }
     }
 }
